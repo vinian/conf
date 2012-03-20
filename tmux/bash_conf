@@ -1,0 +1,22 @@
+# 登录自动启动 tmux 或使用以前启动的 tmux
+# 如果登录 shell 不是 tmux，就自动启动 tmux
+# 添加此文件到 .bash_profile
+#  if [ -f ~/.bash_conf ]; then
+#	. ~/.bash_conf
+#  fi
+
+ppid=`awk '{print $4}' /proc/$$/stat`
+name=`cat /proc/$ppid/cmdline | awk '{print $1}'`
+if [ $name == 'sshd:' ]; then
+    tmux_count=`tmux ls 2>/dev/null | wc -l`
+    if [[ "$tmux_count" == "0" ]]; then
+# Force tmux to assume the terminal supports 256 colours.	
+        tmux -2
+    else
+        if [[ -z "$TMUX" ]]; then
+            session_id=`tmux ls | awk -F: '{print $1}'`
+            tmux attach-session -dr -t $session_id
+        fi
+    fi
+
+fi
