@@ -1,22 +1,28 @@
 # 登录自动启动 tmux 或使用以前启动的 tmux
 # 如果登录 shell 不是 tmux，就自动启动 tmux
-# 添加此文件到 .bash_profile
+# 添加此文件到 .bash_profile or .bashrc
 #  if [ -f ~/.bash_conf ]; then
 #	. ~/.bash_conf
 #  fi
-
 ppid=`awk '{print $4}' /proc/$$/stat`
 name=`cat /proc/$ppid/cmdline | awk '{print $1}'`
 if [ $name == 'sshd:' ]; then
     tmux_count=`tmux ls 2>/dev/null | wc -l`
     if [[ "$tmux_count" == "0" ]]; then
-# Force tmux to assume the terminal supports 256 colours.	
-        tmux -2
+        tmux new-session -d -s vinian 1>/dev/null 2>&1
+# All new windows started at startup.
+        tmux neww -n 'working' -t vinian:1 1>/dev/null 2>&1
+        tmux neww -n 'debug' -t vinian:2 1>/dev/null 2>&1
+        tmux neww -n 'cmd' -t vinian:3 1>/dev/null 2>&1
+        tmux neww -n 'emacs' -t vinian:4 emacs 1>/dev/null 2>&1
+        tmux neww -n 'github' -t vinian:5 1>/dev/null 2>&1
+        tmux neww -n 'other' -t vinian:6 1>/dev/null 2>&1
+# choose session and window
+        tmux select-window -t vinian:1 1>/dev/null 2>&1
+        tmux -2 attach-session -t vinian 1>/dev/null 2>&1
     else
-        if [[ -z "$TMUX" ]]; then
-            session_id=`tmux ls | awk -F: '{print $1}'`
-            tmux attach-session -dr -t $session_id
-        fi
+        session_id=`tmux ls | awk -F: '{print $1}'`
+        tmux attach-session -dr -t $session_id
+        exit 0
     fi
-
 fi
