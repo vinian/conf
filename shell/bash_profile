@@ -1,0 +1,73 @@
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+if [ -f ~/.bash_completion_tmux.sh ]; then
+	. ~/.bash_completion_tmux.sh
+fi
+
+export HISTSIZE=100000000
+export HISTFILESIZE=100000000
+
+alias e='exit'
+
+# 编辑文件和快捷键使用 emacs 的方式
+export EDITOR=emacs
+
+# time 命令的输出格式有时候需要调整一下
+export TIME='\nreal\t%es\nuser\t%Us\nsys\t%Ss'
+
+# 关闭终端的 Ctrl+s Ctrl+q 流控功能。有时候不小心按了 Ctrl+s 会导致终端假死，其实是流控了。
+stty -ixoff -ixon
+
+if [ -z "$debian_chroot" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+# 如果登录 shell 不是 screen，就自动启动 screen。
+ppid=`awk '{print $4}' /proc/$$/stat`
+name=`cat /proc/$ppid/cmdline | awk '{print $1}'`
+if [ $name == 'sshd:' ]; then
+    tmux_count=`tmux ls 2>/dev/null | wc -l`
+    if [[ "$tmux_count" == "0" ]]; then
+        tmux new-session -d -s vinian 1>/dev/null 2>&1
+# All new windows started at startup.
+        tmux neww -n 'working' -t vinian:1 1>/dev/null 2>&1
+        tmux neww -n 'debug' -t vinian:2 1>/dev/null 2>&1
+        tmux neww -n 'cmd' -t vinian:3 1>/dev/null 2>&1
+        tmux neww -n 'emacs' -t vinian:4 emacs 1>/dev/null 2>&1
+        tmux neww -n 'github' -t vinian:5 1>/dev/null 2>&1
+        tmux neww -n 'other' -t vinian:6 1>/dev/null 2>&1
+# choose session and window
+        tmux select-window -t vinian:1 1>/dev/null 2>&1
+        tmux -2 attach-session -t vinian 1>/dev/null 2>&1
+    else
+        session_id=`tmux ls | awk -F: '{print $1}'`
+        tmux attach-session -dr -t $session_id
+        exit 0
+    fi
+fi
