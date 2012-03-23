@@ -22,7 +22,7 @@ if [ $name == 'sshd:' ]; then
         tmux -2 attach-session -t vinian 1>/dev/null 2>&1
     else
         session_id=`tmux ls | awk -F: '{print $1}'`
-        tmux attach-session -dr -t $session_id
+        tmux attach-session -d -t $session_id
         exit 0
     fi
 fi

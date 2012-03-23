@@ -11,8 +11,7 @@ fi
 
 export HISTSIZE=100000000
 export HISTFILESIZE=100000000
-
-alias e='exit'
+export HISTTIMEFORMAT="%y/%m/%d %T "
 
 # 编辑文件和快捷键使用 emacs 的方式
 export EDITOR=emacs
@@ -59,7 +58,7 @@ if [ $name == 'sshd:' ]; then
         tmux neww -n 'working' -t vinian:1 1>/dev/null 2>&1
         tmux neww -n 'debug' -t vinian:2 1>/dev/null 2>&1
         tmux neww -n 'cmd' -t vinian:3 1>/dev/null 2>&1
-        tmux neww -n 'emacs' -t vinian:4 emacs 1>/dev/null 2>&1
+        tmux neww -n 'emacs' -t vinian:4 'emacs -nw' 1>/dev/null 2>&1
         tmux neww -n 'github' -t vinian:5 1>/dev/null 2>&1
         tmux neww -n 'other' -t vinian:6 1>/dev/null 2>&1
 # choose session and window
