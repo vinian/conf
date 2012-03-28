@@ -1,6 +1,6 @@
 # .bash_profile
 
-# Get the aliases and functions
+# load bashrc file
 if [ -f ~/.bashrc ]; then
 	. ~/.bashrc
 fi
