@@ -1,8 +1,9 @@
 background yes
 use_spacer right
 use_xft yes
-font Microsoft YaHei:size=8
-xftfont Microsoft YaHei:size=8
+xftfont Bitstream Vera Sans Mono:size=12
+#font Microsoft YaHei:size=8
+#xftfont Microsoft YaHei:size=8
 override_utf8_locale yes
 update_interval 1.0
 own_window yes
@@ -11,19 +12,24 @@ own_window_transparent yes
 own_window_hints undecorated,below,sticky,skip_taskbar,skip_pager
 double_buffer yes
 minimum_size 206 5
-maximum_width 400
+maximum_width 500
 draw_shades yes
 draw_outline no
 draw_borders no
 draw_graph_borders no
+# 颜色设置
 default_color ffffff
 default_shade_color 000000
 default_outline_color 000000
+# 放置位置
 alignment top_right
 gap_x 5
 gap_y 30
+# number of cpu samples to average
+# set to 1 to disable averaging
 cpu_avg_samples 2
-uppercase no # set to yes if you want all text to be in uppercase
+# 设置显示是否使用大写
+uppercase no 
 
 TEXT
 ${font Microsoft YaHei:style=Bold:pixelsize=30}${alignc}${time %H:%M:%S}
@@ -33,35 +39,34 @@ ${color #98c2c7}主机名:${color #db7093} $alignr$nodename
 ${color #98c2c7}内核: ${color #db7093}$alignr$kernel
 ${color #98c2c7}已运行时间: ${color #db7093}$alignr$uptime
 ${color #98c2c7}CPU使用率: ${color #db7093} $alignr$cpu%
-${color #78af78}$cpubar
+${color #F09000}CPU 1:${color #FFFFFF} ${cpu cpu1}% ${cpubar}
+${color lightblue}CPU 2:${color #FFFFFF} ${cpu cpu2}% ${cpubar}
+${color #F09000}CPU 3:${color #FFFFFF} ${cpu cpu3}% ${cpubar}
+${color lightblue}CPU 4:${color #FFFFFF} ${cpu cpu4}% ${cpubar}
+${color #F09000}内存使用:$color $mem/$memmax - $memperc% ${membar}
+${color #00FF00}交换分区:$color $swap/$swapmax - %$swapperc ${swapbar}
 ${color #98c2c7}进程总数:$alignr${color }$processes ($running_processes 个运行中)
-${color #98c2c7}CPU 最高占用:$alignr PID CPU%
+${color #98c2c7}CPU 最高占用 TOP5:$alignr PID CPU%
 ${color #ddaa00} ${top name 1}$alignr ${top pid 1}${top cpu 1}
-${color lightgrey} ${top name 2}$alignr ${top pid 2}${top cpu 2}
-${color lightgrey} ${top name 3} $alignr${top pid 3}${top cpu 3}
-${color #98c2c7}总内存:${color #4169e1}$alignr ${color}$mem ${color #98c2c7}已用/总${color}$memmax${color #4169e1}${color #db7093}$memperc%
-${color #78af78}${membar}
-${color #98c2c7}SWAP:${color} $alignr ${color}$swap${color #98c2c7}已用/总${color}$swapmax${color #4169e1}${color #db7093}$swapperc%
-${color #78af78}${fs_bar 4 /dev/sda1}
-${color #98c2c7}内存最高占用:$alignr PID MEM%
+${color red} ${top name 2}$alignr ${top pid 2}${top cpu 2}
+${color yellow} ${top name 3} $alignr${top pid 3}${top cpu 3}
+${color blue} ${top name 4} $alignr${top pid 3}${top cpu 4}
+${color green} ${top name 5} $alignr${top pid 3}${top cpu 5}
+${color #98c2c7}内存最高占用 TOP5:$alignr PID MEM%
 ${color #ddaa00}${top_mem name 1}$alignr${top_mem pid 1}${top_mem mem 1}
-${color}${top_mem name 2}$alignr${top_mem pid 2}${top_mem mem 2}
-${color}${top_mem name 3}$alignr${top_mem pid 3}${top_mem mem 3}
+${color red}${top_mem name 2}$alignr${top_mem pid 2}${top_mem mem 2}
+${color yellow}${top_mem name 3}$alignr${top_mem pid 3}${top_mem mem 3}
+${color grey}${top_mem name 4}$alignr${top_mem pid 3}${top_mem mem 4}
+${color blue}${top_mem name 5}$alignr${top_mem pid 3}${top_mem mem 5}
 ${color #98c2c7}网络 $alignr ${color #98c2c7}IP地址: ${color DDAA00}${addr wlan0}${color}
 ${voffset 1}${color #98c2c7}wlan0(上行):${color #db7093} ${upspeed wlan0} k/s ${alignr}${color #98c2c7}全部发送: ${color #db7093}${totalup wlan0}
 ${upspeedgraph wlan0 20,160 dcff82 ffffff}
 ${voffset 1}${color #98c2c7}wlan0(下行):${color #ddaa00} ${downspeed wlan0} k/s ${alignr}${color #98c2c7}全部接收:${color #ddaa00}${totaldown wlan0}
 ${downspeedgraph wlan0 20,160 dcff82 ffffff}
-${color #98c2c7}根分区: ${color}${alignr}${fs_free /} 可用/总 ${fs_size /}
-${color #78af78}${fs_bar 4 /}
 ${color #98c2c7}家目录: ${color}${alignr}${fs_free /home} 可用/总 ${fs_size /home}
 ${color #78af78}${fs_bar 4 /home}
-${color #98c2c7}用户分区: ${color}${alignr}${fs_free /usr} 可用/总 ${fs_size /usr}
-${color #78af78}${fs_bar 4 /usr}
-${color #98c2c7}日志分区: ${color}${alignr}${fs_free /var} 可用/总 ${fs_size /var}
-${color #78af78}${fs_bar 4 /var}
-${color #98c2c7}影视分区: ${color}${alignr}${fs_free /mnt/bak} 可用/总 ${fs_size /mnt/bak}
+${color #98c2c7}数据分区: ${color}${alignr}${fs_free /mnt/bak} 可用/总 ${fs_size /mnt/bak}
 ${color #78af78}${fs_bar 4 /mnt/bak}
-${color #5b6dad}连接数:${color}${alignr}   
-$color 进: ${tcp_portmon 1 32767 count}  出: ${tcp_portmon 32768 61000 count}${alignr}
+${color #00aa33}连接数
+${color green}进: ${tcp_portmon 1 32767 count}                   ${color red}出: ${tcp_portmon 32768 61000 count}${alignr}
 ${color #ffd700}${hr 1}$color

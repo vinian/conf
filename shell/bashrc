@@ -1,8 +1,6 @@
 # ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
 
-# If not running interactively, don't do anything
+# If not running interactively, don't do anything [ -z "$PS1" ] && return
 [ -z "$PS1" ] && return
 
 # append to the history file, don't overwrite it
@@ -11,6 +9,8 @@ shopt -s histappend
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 export HISTSIZE=10000000
 export HISTFILESIZE=10000000
+export HISTTIMEFORMAT="%y/%m/%d %T "
+
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -28,21 +28,21 @@ case "$TERM" in
     xterm-color) color_prompt=yes;;
 esac
 
+# 编辑文件和快捷键使用 emacs 的方式
+export EDITOR=emacs
+
+# time 命令的输出格式有时候需要调整一下
+export TIME='\nreal\t%es\nuser\t%Us\nsys\t%Ss'
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+esac
 # uncomment for a colored prompt, if the terminal has the capability; turned
 # off by default to not distract the user: the focus in a terminal window
 # should be on the output of commands, not on the prompt
 force_color_prompt=yes
-
-if [ -n "$force_color_prompt" ]; then
-    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
+color_prompt=yes
 
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
@@ -61,7 +61,6 @@ xterm*|rxvt*)
 esac
 
 # Alias definitions.
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi
@@ -73,4 +72,33 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+if [ -f ~/.bash_completion_tmux.sh ]; then
+	. ~/.bash_completion_tmux.sh
+fi
+
+# 设置环境变量
 export PATH=$PATH:/sbin:/usr/sbin:.:..
+
+# 如果登录 shell 不是 screen，就自动启动 screen。
+ppid=`awk '{print $4}' /proc/$$/stat`
+name=`cat /proc/$ppid/cmdline | awk '{print $1}'`
+if [ $name == 'sshd:' -o $name == 'roxterm' -o $name == 'xterm' -o $name == 'rxvt' ]; then
+    tmux_count=`tmux ls 2>/dev/null | wc -l`
+    if [[ "$tmux_count" == "0" ]]; then
+        tmux new-session -d -s vinian 1>/dev/null 2>&1
+# All new windows started at startup.
+        tmux neww -n 'working' -t vinian:1 1>/dev/null 2>&1
+        tmux neww -n 'debug' -t vinian:2 1>/dev/null 2>&1
+        tmux neww -n 'cmd' -t vinian:3 1>/dev/null 2>&1
+        tmux neww -n 'emacs' -t vinian:4 'emacs -nw' 1>/dev/null 2>&1
+        tmux neww -n 'github' -t vinian:5 1>/dev/null 2>&1
+        tmux neww -n 'other' -t vinian:6 1>/dev/null 2>&1
+# choose session and window
+        tmux select-window -t vinian:1 1>/dev/null 2>&1
+        tmux -2 attach-session -t vinian 1>/dev/null 2>&1
+    else
+        session_id=`tmux ls | awk -F: '{print $1}'`
+        tmux attach-session -d -t $session_id
+        exit 0
+    fi
+fi
