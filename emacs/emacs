@@ -1,0 +1,322 @@
+(setq display-time-day-and-date t)
+(setq display-time-24hr-format)
+(display-time)
+
+;;;禁止ecb启动提示
+(setq ecb-tip-of-the-day nil)
+;;支持ecb里使用鼠标
+'(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+;;Semantic-settings
+'(semantic-default-c-setup)
+
+;;;加载cscope
+(require 'xcscope)
+
+;;设置行宽
+(setq fill-column 80)
+(setq auto-fill-mode t)
+
+(setq time-stamp-start "最后更新时间:[   ]+\\\\?")
+(setq time-stamp-end: "\n")
+(setq time-stamp-format: "%:y年%:m月%:d日")
+
+;为什么总是问yes或是no
+(fset 'yes-or-no-p' y-or-n-p)
+
+;显示列号
+(setq column-number-mode t)
+(setq line-number-mode t)
+
+;高亮显示拷贝区域
+(transient-mark-mode t)
+
+;交互式粘贴
+(setq x-select-enable-clipboard t)
+
+;语法高亮
+(global-font-lock-mode 1)
+
+;自动显示图片
+(auto-image-file-mode)
+
+;光标靠近指针时，指针自动让开
+(mouse-avoidance-mode 'animate)
+
+;显示匹配的括号
+(show-paren-mode t)
+
+;去掉工具条
+(tool-bar-mode -1)
+
+(add-to-list 'load-path "~/.emacs.d/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
+(ac-config-default)
+(define-key ac-mode-map (kbd "C-TAB") 'auto-complete)
+
+;;中文环境中使用ispell
+(setq-default ispell-program-name "aspell")
+(setq-default ispell-local-dictionary "american")
+(global-set-key (kbd "") 'ispell-complete-word)
+
+(setq-default abbrev-mode t)
+(read-abbrev-file "~/.abbrev_defs")
+(read-abbrev-file "~/.emacs.d/msf-abbrev.el")
+(setq save-abbrevs t)
+
+;;输入密码时不明文显示
+(add-hook 'comint-output-filter-functions
+		  'comint-watch-for-password-prompt)
+
+;;欧洲时间显示 天/月/年(DD/MM/YYYY)
+(setq european-calendar-style 't)
+
+;;显示今天的安排
+(diary)
+
+;显示行号
+(set-scroll-bar-mode nil); no scroll bar, even in x-window-system
+(require 'wb-line-number)
+(wb-line-number-toggle)
+(wb-line-number-enable)
+
+;当文件名以相应的字符结尾时自动打开相应模式
+(setq auto-mode-alist
+        (append ' (("\\.cpp$" . c++-mode)
+ 	    ("\\.hpp$" . c++-mode)
+	    ("\\.plx?$" . cperl-mode)
+	    ("\\.[sS]$" . asm-mode)
+	    ("\\.lsp$" . lisp-mode)
+	    ("\\.php$" . php-mode)
+		("\\.txt$" . text-mode)
+		("\\[^\.$]" . text-mode)
+	    ) auto-mode-alist))
+
+;font-configure
+(set-default-font "-bitstream-Bitstream Vera Sans Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+
+(require 'color-theme)
+(color-theme-initialize)
+(setq color-theme-is-global t)
+(set-background-color "DarkSeaGreen2")
+(color-theme-lawernce)
+;;;外观
+(setq frame-title-format "veinian@gmail.com")
+
+'(browse-url-mozilla-program "iceweasel")
+
+;; 禁止响铃
+(setq visible-bell nil)
+;; 启动界面
+;; 关闭splash-screen
+(setq inhibit-splash-screen t)
+;关闭startup-screen
+(setq inhibit-startup-message t)
+
+;tab
+(setq indent-tabs-mode nil)
+(setq default-tab-width 4)
+(setq tab-width 4)
+(setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40
+      44 48 52 56 60 64 68 72 76 80 84 88 92 96))
+
+(defconst my-c-style
+  '((c-tab-always-indent        . t)
+    (c-comment-only-line-offset . 4)
+    (c-hanging-braces-alist     . ((substatement-open after)
+                                   (brace-list-open)))
+    (c-hanging-colons-alist     . ((member-init-intro before)
+                                   (inher-intro)
+                                   (case-label after)
+                                   (label after)
+                                   (access-label after)))
+    (c-cleanup-list             . (scope-operator
+                                   empty-defun-braces
+                                   defun-close-semi))
+    (c-offsets-alist            . ((arglist-close . c-lineup-arglist)
+                                   (substatement-open . 0)
+                                   (case-label        . 4)
+                                   (block-open        . 0)
+                                   (knr-argdecl-intro . -)))
+    (c-echo-syntactic-information-p . t)
+    )
+  "My C Programming Style")
+
+;; offset customizations not in my-c-style
+(setq c-offsets-alist '((member-init-intro . ++)))
+
+;; Customizations for all modes in CC Mode.
+(defun my-c-mode-common-hook ()
+  ;; add my personal style and set it for the current buffer
+  (c-add-style "PERSONAL" my-c-style t)
+  ;; other customizations
+  (setq tab-width 4
+        ;; this will make sure spaces are used instead of tabs
+        indent-tabs-mode nil)
+  ;; we like auto-newline and hungry-delete
+;  (c-toggle-auto-hungry-state 1)
+  ;; key bindings for all supported languages.  We can put these in
+  ;; c-mode-base-map because c-mode-map, c++-mode-map, objc-mode-map,
+  ;; java-mode-map, idl-mode-map, and pike-mode-map inherit from it.
+  (define-key c-mode-base-map "\C-m" 'c-context-line-break)
+  )
+
+(add-hook 'c-mode-common-hook 'my-c-mode-common-hook) 
+
+;function
+(defun my-insert-date()
+ (interactive)
+ (insert (user-full-name))
+ (insert "@")
+ (insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
+(global-set-key (kbd "C-c m d") 'my-insert-date)
+
+(custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ '(truncate-partial-width-windows nil))
+(custom-set-faces
+  ;; custom-set-faces was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+ )
+
+(defun count-words-buff ()
+  "Count the number of words in the current-buffer;
+print a message in the minibuffer with the result."
+  (interactive)
+  (let ((count 0))
+	(save-excursion
+	  (goto-char (point-min))
+	  (while (< (point) (point-max))
+		(forward-word 1)
+		(setq count (1+ count)))
+	  (message "buffer contains %s words." count))))
+
+;; author: pluskid
+;; 调用 stardict 的命令行接口来查辞典
+;; 如果选中了 region 就查询 region 的内容，
+;; 否则就查询当前光标所在的词
+(global-set-key (kbd "C-c s d") 'kid-star-dict)
+(defun kid-star-dict ()
+  (interactive)
+  (let ((begin (point-min))
+        (end (point-max)))
+    (if mark-active
+        (setq begin (region-beginning)
+              end (region-end))
+      (save-excursion
+        (backward-word)
+        (mark-word)
+        (setq begin (region-beginning)
+              end (region-end))))
+    ;; 有时候 stardict 会很慢，所以在回显区显示一点东西
+    ;; 以免觉得 Emacs 在干什么其他奇怪的事情。
+    (message "searching for %s ..." (buffer-substring begin end))
+    (tooltip-show
+     (shell-command-to-string
+      (concat "sdcv -n "
+              (buffer-substring begin end))))))
+
+;; javascript mode
+(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+
+;; load grapphviz
+(load-file "~/.emacs.d/cedet-1.0/common/cedet-graphviz.el")
+
+;; org-mode
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+;; flyspell mode for spell checking everywhere
+(add-hook 'org-mode-hook 'turn-on-flyspell 'append)
+
+;; vline
+(defun indent-vline-lisp ()
+  (interactive)
+  (funcall
+   (lambda (x)
+     (font-lock-add-keywords
+      nil `((,x
+             (0 (draw-indent-vline))))))
+   "^[ \t]*[,`#'(]")
+  (defadvice delete-char (after indent-vline activate compile)
+    (save-excursion
+      (let* ((p (point))
+             (q (skip-chars-forward " "))
+             (x (progn (skip-chars-backward " ")(bolp))))
+        (if x
+            (remove-text-properties p (+ p q) '(display)))))))
+
+(defun indent-vline ()
+  (interactive)
+  (funcall
+   (lambda (x)
+     (font-lock-add-keywords
+      nil `((,x
+             (0 (if (save-excursion
+                      (skip-chars-backward " ")(bolp))
+                    (let* ((p1 (point))
+                           (p2 (1+ p1)))
+                      (if (or (null (eq (get-byte p1) 32))
+                              (get-text-property p1 'display))
+                          nil
+                        (draw-indent-tab p1 p2)
+                        nil))))))))
+   " \\( \\)")
+  (defadvice delete-char (after indent-vline activate compile)
+    (save-excursion
+      (let* ((p (point))
+             (q (skip-chars-forward " "))
+             (x (progn (skip-chars-backward " ")(bolp))))
+        (if x
+            (remove-text-properties p (+ p q) '(display)))))))
+
+
+;; toggle-fullscreen
+(defun toggle-fullscreen (&optional f)
+  (interactive)
+  (let ((current-value (frame-parameter nil 'fullscreen)))
+	(set-frame-parameter nil 'fullscreen
+						 (if (equal 'fullboth current-value)
+							 (if (boundp 'old-fullscreen) old-fullscreen nil)
+						   (progn (setq old-fullscreen current-value)
+								  'fullboth)))))
+
+(global-set-key [f11] 'toggle-fullscreen)
+
+;; By an unknown contributor
+(global-set-key "%" 'match-paren)
+          
+(defun match-paren (arg)
+  "Go to the matching paren if on a paren; otherwise insert %."
+  (interactive "p")
+  (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+		((looking-at "\\s\)") (forward-char 1) (backward-list 1))
+		(t (self-insert-command (or arg 1)))))
+
+;; perl setting
+(defalias 'perl-mode 'cperl-mode)
+
+;; 在 perl 模式中以 4 个空格缩排
+'(cperl-close-paren-offset -4)
+'(cperl-continued-statement-offset 4)
+'(cperl-indent-level 4)
+'(cperl-indent-parens-as-block t)
+'(cperl-tab-always-indent t)
+
+;; 加载 perl 说明文档文件
+(defun application-template-pl ()
+  "Insert the standard Perl application template"
+  (interactive "*")
+  (switch-to-buffer "application-template-pl")
+  (insert-file "~/.emacs.d/perl-doc-template.pl"))
+
+(global-set-key "\C-ca" 'application-template-pl)
