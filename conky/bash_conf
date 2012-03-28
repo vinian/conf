@@ -1,0 +1,5 @@
+# add this file to ~/.bashrc
+CONKY=`ps aux |grep conky | grep -v grep | wc -l`;
+if [ $CONKY -eq 0 ]; then
+    [ -x /usr/bin/conky ] && /usr/bin/conky 1>/dev/null 2>&1 &
+fi
