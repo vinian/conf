@@ -7,8 +7,8 @@
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-export HISTSIZE=10000000
-export HISTFILESIZE=10000000
+export HISTSIZE=1000000000
+export HISTFILESIZE=1000000000
 export HISTTIMEFORMAT="%y/%m/%d %T "
 
 # check the window size after each command and, if necessary,
@@ -79,7 +79,7 @@ fi
 # 设置环境变量
 export PATH=$PATH:/sbin:/usr/sbin:.:..
 
-# 如果登录 shell 不是 screen，就自动启动 screen。
+# 如果登录 shell 不是 tmux，就自动启动 tmux
 ppid=`awk '{print $4}' /proc/$$/stat`
 name=`cat /proc/$ppid/cmdline | awk '{print $1}'`
 if [ $name == 'sshd:' -o $name == 'roxterm' -o $name == 'xterm' -o $name == 'rxvt' ]; then
