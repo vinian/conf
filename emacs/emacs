@@ -320,3 +320,11 @@ print a message in the minibuffer with the result."
   (insert-file "~/.emacs.d/perl-doc-template.pl"))
 
 (global-set-key "\C-ca" 'application-template-pl)
+
+;; yaml-mode
+(add-hook 'yaml-mode-hook '
+  (lambda ()
+	(define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+;;
+(desktop-save-mode t)
