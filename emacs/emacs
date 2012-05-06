@@ -20,32 +20,32 @@
 (setq time-stamp-end: "\n")
 (setq time-stamp-format: "%:y年%:m月%:d日")
 
-;为什么总是问yes或是no
+;; 为什么总是问yes或是no
 (fset 'yes-or-no-p' y-or-n-p)
 
-;显示列号
+;; 显示列号
 (setq column-number-mode t)
 (setq line-number-mode t)
 
-;高亮显示拷贝区域
+;; 高亮显示拷贝区域
 (transient-mark-mode t)
 
-;交互式粘贴
+;; 交互式粘贴
 (setq x-select-enable-clipboard t)
 
-;语法高亮
+;; 语法高亮
 (global-font-lock-mode 1)
 
-;自动显示图片
+;; 自动显示图片
 (auto-image-file-mode)
 
-;光标靠近指针时，指针自动让开
+;; 光标靠近指针时，指针自动让开
 (mouse-avoidance-mode 'animate)
 
-;显示匹配的括号
+;; 显示匹配的括号
 (show-paren-mode t)
 
-;去掉工具条
+;; 去掉工具条
 (tool-bar-mode -1)
 
 (add-to-list 'load-path "~/.emacs.d/")
@@ -328,3 +328,6 @@ print a message in the minibuffer with the result."
 
 ;;
 (desktop-save-mode t)
+
+;; disable Ctrl+Space
+(global-unset-key (kbd "C-SPC"))
