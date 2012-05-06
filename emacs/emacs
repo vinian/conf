@@ -99,8 +99,8 @@
 (color-theme-initialize)
 (setq color-theme-is-global t)
 (set-background-color "DarkSeaGreen2")
-(color-theme-lawernce)
-;;;外观
+;;(color-theme-lawernce)
+;;; 外观
 (setq frame-title-format "veinian@gmail.com")
 
 '(browse-url-mozilla-program "iceweasel")
