@@ -55,14 +55,16 @@
 
 ;; font
 
-(set-default-font "-outline-新宋体-normal-r-normal-*-18-*-96-96-c-*-iso10646-1")
-
+(set-default-font "-outline-新宋体-normal-r-normal-*-20-*-80-24-c-*-iso10646-1")
 
 
 (add-to-list 'load-path "c:/Users/anonymous/.emacs.d/")
 (require 'auto-complete-config)
 (add-to-list 'ac-dictionary-directories "c:/Users/anonymous/.emacs.d//ac-dict")
 (ac-config-default)
+
+
+
 
 ;显示行号
 (set-scroll-bar-mode nil); no scroll bar, even in x-window-system
@@ -82,14 +84,48 @@ load-path))
 ;;set the default file path
 (setq default-directory "~/")
 
+(require 'package)
+(package-initialize)
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
 
-(when (>= emacs-major-version 24)
-  (require 'package)
-  (package-initialize)
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  )
-
-
+;; color
 (require 'color-theme)
 (color-theme-initialize)
 (color-theme-deep-blue)
+
+(require 'autopair)
+(autopair-global-mode)
+
+(require 'flycheck)
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
+
+;; ruby
+
+(autoload 'ruby-mode "ruby-mode" "Major mode for ruby files" t)
+(add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
+
+(require 'ac-inf-ruby) ;; when not installed via package.el
+(eval-after-load 'auto-complete
+  '(add-to-list 'ac-modes 'inf-ruby-mode))
+(add-hook 'inf-ruby-mode-hook 'ac-inf-ruby-enable)
+(eval-after-load 'inf-ruby '
+  '(define-key inf-ruby-mode-map (kbd "TAB") 'auto-complete))
+
+
+;; perl
+(defalias 'perl-mode 'cperl-mode)
+(autoload 'perl-mode "perl-mode" "Major mode for perl files" t)
+(setq cperl-hairy t)
+
+
+;; python
+(autoload 'python-mode "python-mode" "Major mode for python files" t)
+;;(add-hook 'python-mode-hook 'jedi:setup)
+;;(setq jedi:setup-keys t)                      ; optional
+;;(setq jedi:complete-on-dot t)                 ; optional
+
+
