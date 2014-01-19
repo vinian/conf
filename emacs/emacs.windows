@@ -1,0 +1,95 @@
+(setq display-time-day-and-date t)
+(setq display-time-24hr-format)
+(display-time)
+
+;;;禁止ecb启动提示
+(setq ecb-tip-of-the-day nil)
+;;支持ecb里使用鼠标
+'(ecb-primary-secondary-mouse-buttons (quote mouse-1--C-mouse-1))
+;;Semantic-settings
+'(semantic-default-c-setup)
+
+;;设置行宽
+(setq fill-column 80)
+(setq auto-fill-mode t)
+
+(setq time-stamp-start "最后更新时间:[ ]+\\\\?")
+(setq time-stamp-end: "\n")
+(setq time-stamp-format: "%:y年%:m月%:d日")
+
+;; 为什么总是问yes或是no
+(fset 'yes-or-no-p' y-or-n-p)
+
+;; 显示列号
+(setq column-number-mode t)
+(setq line-number-mode t)
+
+;; 高亮显示拷贝区域
+(transient-mark-mode t)
+
+;; 交互式粘贴
+(setq x-select-enable-clipboard t)
+
+;; 语法高亮
+(global-font-lock-mode 1)
+
+;; 自动显示图片
+(auto-image-file-mode)
+
+;; 光标靠近指针时，指针自动让开
+(mouse-avoidance-mode 'animate)
+
+;; 显示匹配的括号
+(show-paren-mode t)
+
+;; 去掉工具条
+(tool-bar-mode -1)
+
+;;输入密码时不明文显示
+(add-hook 'comint-output-filter-functions
+                 'comint-watch-for-password-prompt)
+
+;;欧洲时间显示 天/月/年(DD/MM/YYYY)
+(setq european-calendar-style 't)
+
+
+;; font
+
+(set-default-font "-outline-新宋体-normal-r-normal-*-18-*-96-96-c-*-iso10646-1")
+
+
+
+(add-to-list 'load-path "c:/Users/anonymous/.emacs.d/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "c:/Users/anonymous/.emacs.d//ac-dict")
+(ac-config-default)
+
+;显示行号
+(set-scroll-bar-mode nil); no scroll bar, even in x-window-system
+(require 'wb-line-number)
+(wb-line-number-toggle)
+(wb-line-number-enable)
+
+
+(setq load-path (cons "C:/Program Files (x86)/erl5.10.4/lib/tools-2.6.13/emacs"
+load-path))
+(setq erlang-root-dir "C:/Program Files (x86)/erl5.10.4")
+(setq exec-path (cons "C:/Program Files (x86)/erl5.10.4/bin" exec-path))
+(require 'erlang-start)
+
+(setenv "HOME" "C:/Users/anonymous/")
+(setenv "PATH" "E:/Users/anonymous/")
+;;set the default file path
+(setq default-directory "~/")
+
+
+(when (>= emacs-major-version 24)
+  (require 'package)
+  (package-initialize)
+  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  )
+
+
+(require 'color-theme)
+(color-theme-initialize)
+(color-theme-deep-blue)
