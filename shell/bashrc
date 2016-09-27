@@ -105,3 +105,23 @@ if [ $name == 'sshd:' -o $name == 'roxterm' -o $name == 'xterm' -o $name == 'rxv
         exit 0
     fi
 fi
+
+SSH_ENV="$HOME/.ssh/environment"
+
+function start_agent {
+    echo "Initialising new SSH agent..."
+    (umask 066; /usr/bin/ssh-agent > "${SSH_ENV}")
+    . "${SSH_ENV}" > /dev/null
+    /usr/bin/ssh-add;
+}
+
+# Source SSH settings, if applicable
+
+if [ -f "${SSH_ENV}" ]; then
+    . "${SSH_ENV}" > /dev/null
+    ps -ef | grep ${SSH_AGENT_PID} | grep ssh-agent$ > /dev/null || {
+        start_agent;
+    }
+else
+    start_agent;
+fi
