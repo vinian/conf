@@ -9,8 +9,11 @@
 ;;Semantic-settings
 '(semantic-default-c-setup)
 
+;; flycheckz
+(add-hook 'after-init-hook #'global-flycheck-mode)
+
 ;;;加载cscope
-(require 'xcscope)
+;;(require 'xcscope)
 
 ;;设置行宽
 (setq fill-column 80)
@@ -48,11 +51,38 @@
 ;; 去掉工具条
 (tool-bar-mode -1)
 
-(add-to-list 'load-path "~/.emacs.d/")
-(require 'auto-complete-config)
-(add-to-list 'ac-dictionary-directories "~/.emacs.d//ac-dict")
-(ac-config-default)
-(define-key ac-mode-map (kbd "C-TAB") 'auto-complete)
+(add-to-list 'load-path "~/.emacs.d/list/")
+;;(add-to-list 'load-path "/usr/share/emacs24/site-lisp/")
+
+;; add git
+(require 'git)
+
+(require 'package)
+(package-initialize)
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+
+
+;;;; go mode
+;;(require 'go-mode-load)
+;;
+;;;; gofmt
+;;(add-hook 'before-save-hook 'gofmt-before-save)
+;;
+;;;;
+;;(add-hook 'go-mode-hook (lambda ()
+;;                          (local-set-key (kbd "C-c C-r") 'go-remove-unused-imports)))
+;;;; gomode
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+(require 'go-autocomplete)
+
+;; buffer move
+(require 'buffer-move)
+;; delete trailling space
+(setq delete-trailing-lines nil)
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;;中文环境中使用ispell
 (setq-default ispell-program-name "aspell")
@@ -61,7 +91,7 @@
 
 (setq-default abbrev-mode t)
 (read-abbrev-file "~/.abbrev_defs")
-(read-abbrev-file "~/.emacs.d/msf-abbrev.el")
+;;(read-abbrev-file "~/.emacs.d/msf-abbrev.el")
 (setq save-abbrevs t)
 
 ;;输入密码时不明文显示
@@ -74,36 +104,20 @@
 ;;显示今天的安排
 (diary)
 
-;显示行号
-(set-scroll-bar-mode nil); no scroll bar, even in x-window-system
-(require 'wb-line-number)
-(wb-line-number-toggle)
-(wb-line-number-enable)
-
-;当文件名以相应的字符结尾时自动打开相应模式
-(setq auto-mode-alist
-        (append ' (("\\.cpp$" . c++-mode)
- 	    ("\\.hpp$" . c++-mode)
-	    ("\\.plx?$" . cperl-mode)
-	    ("\\.[sS]$" . asm-mode)
-	    ("\\.lsp$" . lisp-mode)
-	    ("\\.php$" . php-mode)
-		("\\.txt$" . text-mode)
-		("\\[^\.$]" . text-mode)
-	    ) auto-mode-alist))
+;; key for macosx terminal
+(setq x-alt-keysym 'meta)
 
 ;font-configure
-(set-default-font "-bitstream-Bitstream Vera Sans Mono-normal-normal-normal-*-16-*-*-*-m-0-iso10646-1")
+(set-default-font "-bitstream-Bitstream Vera Sans Mono-normal-normal-normal-*-22-*-*-*-m-0-iso10646-1")
+;(add-to-list 'default-frame-alist '(font . "DejaVu Sans Mono-16"))
+
+(prefer-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
 
 (require 'color-theme)
 (color-theme-initialize)
 (setq color-theme-is-global t)
-(set-background-color "DarkSeaGreen2")
-;;(color-theme-lawernce)
-;;; 外观
-(setq frame-title-format "veinian@gmail.com")
-
-'(browse-url-mozilla-program "iceweasel")
+;;(color-theme-deep-blue)
 
 ;; 禁止响铃
 (setq visible-bell nil)
@@ -117,71 +131,60 @@
 (setq indent-tabs-mode nil)
 (setq default-tab-width 4)
 (setq tab-width 4)
-(setq tab-stop-list '(4 8 12 16 20 24 28 32 36 40
-      44 48 52 56 60 64 68 72 76 80 84 88 92 96))
 
-(defconst my-c-style
-  '((c-tab-always-indent        . t)
-    (c-comment-only-line-offset . 4)
-    (c-hanging-braces-alist     . ((substatement-open after)
-                                   (brace-list-open)))
-    (c-hanging-colons-alist     . ((member-init-intro before)
-                                   (inher-intro)
-                                   (case-label after)
-                                   (label after)
-                                   (access-label after)))
-    (c-cleanup-list             . (scope-operator
-                                   empty-defun-braces
-                                   defun-close-semi))
-    (c-offsets-alist            . ((arglist-close . c-lineup-arglist)
-                                   (substatement-open . 0)
-                                   (case-label        . 4)
-                                   (block-open        . 0)
-                                   (knr-argdecl-intro . -)))
-    (c-echo-syntactic-information-p . t)
-    )
-  "My C Programming Style")
+;显示行号
+(set-scroll-bar-mode nil); no scroll bar, even in x-window-system
+;;(require 'wb-line-number)
+;;(wb-line-number-toggle)
+;;(wb-line-number-enable)
+(global-linum-mode t)
+(setq linum-format "  %d ")
 
-;; offset customizations not in my-c-style
-(setq c-offsets-alist '((member-init-intro . ++)))
+                                        ;当文件名以相应的字符结尾时自动打开相应模式
+(setq auto-mode-alist
+      (append '(("\\.cpp$" . c++-mode)
+                ("\\.hpp$" . c++-mode)
+                ("\\.plx?$" . cperl-mode)
+                ("\\.p6$" . cperl-mode)
+                ("\\.py$" . python-mode)
+                ("\\.py2$" . python-mode)
+                ("\\.py3" . python-mode)
+                ("\\.[sS]$" . asm-mode)
+                ("\\.lsp$" . emacs-lisp-mode)
+                ("\\.lisp$" . emacs-lisp-mode)
+                ("\\.txt$" . text-mode)
+                ("\\.hs$" . haskell-mode)
+                ("\\.go$" . go-mode)
+                ("\\[^\.$]" . text-mode)
+                ("\\.lua$]" . lua-mode)
+                )
+              auto-mode-alist))
 
-;; Customizations for all modes in CC Mode.
-(defun my-c-mode-common-hook ()
-  ;; add my personal style and set it for the current buffer
-  (c-add-style "PERSONAL" my-c-style t)
-  ;; other customizations
-  (setq tab-width 4
-        ;; this will make sure spaces are used instead of tabs
-        indent-tabs-mode nil)
-  ;; we like auto-newline and hungry-delete
-;  (c-toggle-auto-hungry-state 1)
-  ;; key bindings for all supported languages.  We can put these in
-  ;; c-mode-base-map because c-mode-map, c++-mode-map, objc-mode-map,
-  ;; java-mode-map, idl-mode-map, and pike-mode-map inherit from it.
-  (define-key c-mode-base-map "\C-m" 'c-context-line-break)
-  )
 
-(add-hook 'c-mode-common-hook 'my-c-mode-common-hook) 
+;; 外观
+
+'(browse-url-mozilla-program "firefox")
+
 
 ;function
 (defun my-insert-date()
- (interactive)
- (insert (user-full-name))
- (insert "@")
- (insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
+  (interactive)
+  (insert (user-full-name))
+  (insert "@")
+  (insert (format-time-string "%Y/%m/%d %H:%M:%S" (current-time))))
 (global-set-key (kbd "C-c m d") 'my-insert-date)
 
 (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(truncate-partial-width-windows nil))
 (custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  )
 
 (defun count-words-buff ()
@@ -196,38 +199,15 @@ print a message in the minibuffer with the result."
 		(setq count (1+ count)))
 	  (message "buffer contains %s words." count))))
 
-;; author: pluskid
-;; 调用 stardict 的命令行接口来查辞典
-;; 如果选中了 region 就查询 region 的内容，
-;; 否则就查询当前光标所在的词
-(global-set-key (kbd "C-c s d") 'kid-star-dict)
-(defun kid-star-dict ()
-  (interactive)
-  (let ((begin (point-min))
-        (end (point-max)))
-    (if mark-active
-        (setq begin (region-beginning)
-              end (region-end))
-      (save-excursion
-        (backward-word)
-        (mark-word)
-        (setq begin (region-beginning)
-              end (region-end))))
-    ;; 有时候 stardict 会很慢，所以在回显区显示一点东西
-    ;; 以免觉得 Emacs 在干什么其他奇怪的事情。
-    (message "searching for %s ..." (buffer-substring begin end))
-    (tooltip-show
-     (shell-command-to-string
-      (concat "sdcv -n "
-              (buffer-substring begin end))))))
-
 ;; javascript mode
-(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
-(add-to-list 'auto-mode-alist '("\\.js$" . espresso-mode))
-(add-to-list 'auto-mode-alist '("\\.json$" . espresso-mode))
+;;(autoload #'espresso-mode "espresso" "Start espresso-mode" t)
+;;(add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode))
+;;(add-to-list 'auto-mode-alist '("\\.json$" . javascript-mode))
+(autoload 'js3-mode "js3" nil t)
+(add-to-list 'auto-mode-alist '("\\.js$" . js3-mode))
+(add-to-list 'auto-mode-alist '("\\.json$" . js3-mode))
 
-;; load grapphviz
-(load-file "~/.emacs.d/cedet-1.0/common/cedet-graphviz.el")
+
 
 ;; org-mode
 (add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
@@ -237,6 +217,10 @@ print a message in the minibuffer with the result."
 (global-set-key "\C-cb" 'org-iswitchb)
 ;; flyspell mode for spell checking everywhere
 (add-hook 'org-mode-hook 'turn-on-flyspell 'append)
+
+;; load grapphviz
+;; add graphviz shortcut
+(load-file "~/.emacs.d/lisp/graphviz-dot-mode.el")
 
 ;; vline
 (defun indent-vline-lisp ()
@@ -294,7 +278,7 @@ print a message in the minibuffer with the result."
 
 ;; By an unknown contributor
 (global-set-key "%" 'match-paren)
-          
+
 (defun match-paren (arg)
   "Go to the matching paren if on a paren; otherwise insert %."
   (interactive "p")
@@ -302,32 +286,171 @@ print a message in the minibuffer with the result."
 		((looking-at "\\s\)") (forward-char 1) (backward-list 1))
 		(t (self-insert-command (or arg 1)))))
 
-;; perl setting
+;; Use cperl-mode instead of the default perl-mode
 (defalias 'perl-mode 'cperl-mode)
 
-;; 在 perl 模式中以 4 个空格缩排
-'(cperl-close-paren-offset -4)
-'(cperl-continued-statement-offset 4)
-'(cperl-indent-level 4)
-'(cperl-indent-parens-as-block t)
-'(cperl-tab-always-indent t)
+;; Use 4 space indents via cperl mode
+(custom-set-variables
+ '(cperl-close-paren-offset -4)
+ '(cperl-continued-statement-offset 4)
+ '(cperl-indent-level 4)
+ '(cperl-indent-parens-as-block t)
+ '(cperl-tab-always-indent t)
+ )
 
-;; 加载 perl 说明文档文件
-(defun application-template-pl ()
-  "Insert the standard Perl application template"
-  (interactive "*")
-  (switch-to-buffer "application-template-pl")
-  (insert-file "~/.emacs.d/perl-doc-template.pl"))
-
-(global-set-key "\C-ca" 'application-template-pl)
-
-;; yaml-mode
-(add-hook 'yaml-mode-hook '
-  (lambda ()
-	(define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+;; expands for keywords such as
+(setq cperl-electric-keywords t)
+(setq cperl-auto-newline t)
 
 ;;
 (desktop-save-mode t)
 
 ;; disable Ctrl+Space
 (global-unset-key (kbd "C-SPC"))
+
+;; copy paste current line
+(defadvice kill-ring-save (before slick-copy activate compile)
+  "When called interactively with no active region, copy the current line."
+  (interactive
+   (if mark-active
+       (list (region-beginning) (region-end))
+     (progn
+       (message "Current line is copied.")
+       (list (line-beginning-position) (line-beginning-position 2)) ) ) ))
+
+(defadvice kill-region (before slick-copy activate compile)
+  "When called interactively with no active region, cut the current line."
+  (interactive
+   (if mark-active
+       (list (region-beginning) (region-end))
+     (progn
+       (list (line-beginning-position) (line-beginning-position 2)) ) ) ))
+
+(global-set-key (kbd "<f2>") 'kill-region) ; cut.
+(global-set-key (kbd "<f3>") 'kill-ring-save) ; copy.
+(global-set-key (kbd "<f4>") 'yank) ; paste.
+
+;; auto insert base on file extenstion
+(auto-insert-mode)
+(setq auto-insert-directory "~/.emacs.d/template/")
+;; disable prompted before insertion
+(setq auto-insert-query nil)
+(define-auto-insert "\.plx" "perl-code-template.pl")
+(define-auto-insert "\.pl" "perl-code-template.pl")
+(define-auto-insert "\.pm" "perl-module-template.pm")
+(define-auto-insert "\.html" "html-template.html")
+(define-auto-insert "\.yaml" "yaml-template.yaml")
+(define-auto-insert "\.tex" "tex-template.tex")
+(define-auto-insert "\.sh" "shell-template.sh")
+(define-auto-insert "\.p6" "perl6.p6")
+(define-auto-insert "\.go" "go.go")
+(define-auto-insert "\.lisp" "lisp.lisp")
+(define-auto-insert "\.erl" "erlang.erl")
+(define-auto-insert "\.py" "python.py")
+
+;; reset PATH variable
+(setenv "PATH"
+        (concat
+         (getenv "PATH")
+         ":/usr/sbin"
+         ":/sbin"
+         ":/home/vinian/bin"
+         ":/usr/local/sbin"
+         )
+        )
+
+(setenv "GOPATH" "/home/vinian/go")
+
+(setq load-path (cons  "/usr/lib/erlang/lib/tools-2.6.13/emacs"
+                       load-path))
+(setq erlang-root-dir "/usr/lib/erlang/lib/tools-2.6.13")
+(setq exec-path (cons "/usr/lib/erlang/lib/tools-2.6.13/bin" exec-path))
+(require 'erlang-start)
+(add-to-list 'auto-mode-alist '("\\.erl\\'" . erlang-mode))
+(add-to-list 'ac-modes 'erlang-mode)
+
+;; autopair
+(require 'autopair)
+(autopair-global-mode) ;; to enable in all buffers
+
+
+
+;; ruby and rsense
+;; Replace $RSENSE_HOME with the directory where RSense was installed in full path
+;; Example for UNIX-like systems
+(add-to-list 'auto-mode-alist '("\\.rb\\'" . ruby-mode))
+(autoload 'ruby-mode "ruby-mode" "Major mode for editing Ruby code" t)
+(add-hook 'ruby-mode-hook (lambda () (local-set-key "\r" 'newline-and-indent)))
+(require 'inf-ruby)
+(require 'ruby-electric)
+(add-hook 'ruby-mode-hook
+          #'(lambda ()
+              (autopair-mode -1)
+              (ruby-electric-mode t)))
+
+(require 'ruby-tools)
+
+(defun ruby-insert-end ()
+  (interactive)
+  (insert "end")
+  (ruby-indent-line t)
+  (end-of-line))
+
+;;(add-to-list 'load-path "~/.emacs.d/")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/ac-dict")
+(ac-config-default)
+(ac-set-trigger-key "TAB")
+(define-key ac-mode-map (kbd "C-TAB") 'auto-complete)
+
+
+(setq inferior-lisp-program "/usr/bin/clisp")
+(add-to-list 'load-path "/home/vinian/.emacs.d/elpa/slime-20140119.627/")
+(require 'slime)
+(slime-setup)
+
+
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
+(el-get 'sync)
+
+;;; indeent 2 spaces
+(add-hook 'python-mode-hook 'jedi:setup)
+(setq jedi:complete-on-dot t)  ; optional
+;; Python Hook
+;(add-hook 'python-mode-hook '(lambda ()
+; (setq python-indent 2)))
+;(custom-set-variables
+; '(python-guess-indent nil))
+(require 'yaml-mode)
+(add-to-list 'auto-mode-alist '("\\.yaml$" . yaml-mode))
+(add-to-list 'auto-mode-alist '("\\.yml$" . yaml-mode))
+
+
+(autoload 'apache-mode "apache-mode" nil t)
+(add-to-list 'auto-mode-alist '("\\.htaccess\\'"   . apache-mode))
+(add-to-list 'auto-mode-alist '("httpd\\.conf\\'"  . apache-mode))
+(add-to-list 'auto-mode-alist '("srm\\.conf\\'"    . apache-mode))
+(add-to-list 'auto-mode-alist '("access\\.conf\\'" . apache-mode))
+(add-to-list 'auto-mode-alist '("sites-\\(available\\|enabled\\)/" . apache-mode))
+
+(defun single-lines-only ()
+  "replace multiple blank lines with a single one"
+  (interactive)
+  (goto-char (point-min))
+  (while (re-search-forward "\\(^\\s-*$\\)\n" nil t)
+	(replace-match "\n")
+	(forward-char 1)))
+
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . jsx-mode))
+(autoload 'jsx-mode "jsx-mode" "JSX mode" t)
+
+
