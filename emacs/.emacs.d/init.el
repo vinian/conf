@@ -14,7 +14,10 @@
 (require 'init-auto-complete)
 (require 'init-auto-pair)
 (require 'init-ui)
+(require 'init-git)
+(require 'init-navigation)
 (require 'init-editing)
+(require 'init-todo)
 (require 'init-rust)
 (require 'init-python)
 
@@ -27,7 +30,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (flycheck-rust racer flycheck rainbow-delimiters autopair company))))
+    (company-jedi color-theme flycheck-rust racer flycheck rainbow-delimiters company))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
