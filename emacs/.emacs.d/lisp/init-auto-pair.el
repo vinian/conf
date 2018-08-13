@@ -1,6 +1,6 @@
-(require-package 'autopair)
+(require-package 'smartparens)
 
-(require 'autopair)
-(autopair-global-mode)
+(require 'smartparens-config)
 
 (provide 'init-auto-pair)
+

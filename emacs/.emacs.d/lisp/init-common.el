@@ -71,4 +71,9 @@
 ;; session
 (desktop-save-mode t)
 
+(defalias 'yes-or-no-p 'y-or-n-p)
+
+;; open outline-mode
+(outline-minor-mode 1)
+
 (provide 'init-common)
