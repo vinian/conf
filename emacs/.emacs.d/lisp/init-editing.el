@@ -43,4 +43,6 @@
 
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
 
+(define-coding-system-alias 'UTF-8 'utf-8)
+
 (provide 'init-editing)
